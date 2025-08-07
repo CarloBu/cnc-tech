@@ -1,0 +1,176 @@
+---
+import { getCollection } from 'astro:content';
+import Card from '@/components/Card.astro';
+import Layout from '@/layouts/Layout.astro';
+import ScrollIndicator from '@/components/ScrollIndicator.astro';
+import LottieLayer from '@/components/LottieLayer.astro';
+
+const allCards = await getCollection('cardsCollection');
+
+const missionCard = allCards.find((card) => card.id === 'mission');
+const trainingCard = allCards.find((card) => card.id === 'training');
+const liveCard = allCards.find((card) => card.id === 'live');
+---
+
+<Layout title="CNC">
+	<div class="loader-wrapper">
+		<LottieLayer id="loader-black-screen" src="/lottie/loaderBlackScreen.json" fillScreen removeAfterPlay />
+		<LottieLayer id="loader-layer" src="/lottie/loader.json" removeAfterPlay />
+	</div>
+	<ScrollIndicator />
+
+	<!-- CNC Logo -->
+	<div class="logo-container">
+		<img id="cnc-logo" src="/cncLogo.svg" alt="CNC Logo" class="logo" />
+	</div>
+
+	{
+		missionCard && (
+			<div class="card-position card-position--left-middle" id="card-mission">
+				<Card content={missionCard} imagePosition="bottom" />
+			</div>
+		)
+	}
+
+	{
+		trainingCard && (
+			<div class="card-position card-position--right-bottom" id="card-training">
+				<Card content={trainingCard} imagePosition="right" />
+			</div>
+		)
+	}
+
+	{
+		liveCard && (
+			<div class="card-position card-position--right-middle" id="card-live">
+				<Card content={liveCard} size="large" imagePosition="right" />
+			</div>
+		)
+	}
+
+	<div class="scroll-section"></div>
+	<canvas id="canvas"></canvas>
+	<div class="bg-overlay-wrapper">
+		<LottieLayer id="bg-main" src="/lottie/bgMain.json" segments={[120, 149]} fillScreen />
+		<LottieLayer id="bg-inner-circle" src="/lottie/bgInnerCircle.json" rotate="clockwise" rotationSpeed={60} />
+		<LottieLayer id="bg-outer-circle" src="/lottie/bgOuterCircle.json" rotate="counter-clockwise" rotationSpeed={60} />
+		<LottieLayer id="bg-static-circle" src="/lottie/bgStaticCircle.json" />
+		<LottieLayer id="bg-cnc-letters" src="/lottie/bgCncLetters.json" />
+	</div>
+	<style>
+		.loader-wrapper {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 10;
+			pointer-events: none;
+		}
+
+		.bg-overlay-wrapper {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			pointer-events: none;
+		}
+
+		#canvas {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 2;
+		}
+
+		.scroll-section {
+			height: 800vh;
+			position: relative;
+			z-index: 3;
+		}
+
+		.card-position {
+			position: fixed;
+			z-index: 4;
+		}
+
+		.card-position--left-middle {
+			left: 10vw;
+			top: 50vh;
+			transform: translateY(-50%);
+		}
+
+		.card-position--right-bottom {
+			right: 15vw;
+			bottom: 15vh;
+		}
+
+		.card-position--right-middle {
+			right: 10vw;
+			top: 50vh;
+			transform: translateY(-50%);
+		}
+
+		.logo-container {
+			position: fixed;
+			top: 4vh;
+			left: 5vw;
+			z-index: 5;
+		}
+
+		.logo {
+			width: 11.516rem;
+			height: 3rem;
+			opacity: 1;
+		}
+	</style>
+	<script src="@/scripts/threejs.js"></script>
+	<script src="@/scripts/customScrollbar.js"></script>
+	<script>
+		import lottie from 'lottie-web';
+		import { initializeCardsReveal } from '@/scripts/cardsRevealManager.js';
+		import { initGlobalGsapAnimations } from '@/scripts/globalGsapAnimations.js';
+		import { initializeCardAnimators } from '@/scripts/gsapCardReveal.js';
+		declare global {
+			interface Window {
+				lenisManager: any;
+				lottie: any;
+			}
+		}
+
+		window.lottie = lottie;
+
+		// Prevent browser scroll restoration and reset scroll position immediately
+		if ('scrollRestoration' in history) {
+			history.scrollRestoration = 'manual';
+		}
+		window.scrollTo(0, 0);
+
+		document.addEventListener('DOMContentLoaded', () => {
+			// Ensure scroll position is at top on page load
+			window.scrollTo(0, 0);
+
+			setTimeout(() => {
+				if (window.lenisManager) {
+					// Reset scroll position in Lenis as well
+					window.lenisManager.scrollToTop();
+
+					initGlobalGsapAnimations(window.lenisManager);
+
+					const cardsAPI = initializeCardsReveal(window.lenisManager);
+				}
+			}, 100);
+		});
+
+		// Additional safeguard - reset scroll on page show (handles back/forward navigation)
+		window.addEventListener('pageshow', (event) => {
+			window.scrollTo(0, 0);
+			if (window.lenisManager) {
+				window.lenisManager.scrollToTop();
+			}
+		});
+	</script>
+</Layout>
