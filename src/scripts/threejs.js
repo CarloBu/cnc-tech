@@ -4,8 +4,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { gsap } from 'gsap';
 import { createLenisManager } from './lenis.js';
-import { initializeCardsReveal } from './cardsRevealManager.js';
-import { createCustomScrollbar } from './customScrollbar.js';
+
 import { applyMaterials, initializeUVAnimation, updateHeliOpacityUV } from './materials.js';
 
 const canvas = document.getElementById('canvas');
@@ -13,8 +12,6 @@ const scrollIndicator = document.getElementById('scroll-indicator');
 const scene = new THREE.Scene();
 
 const lenisAPI = createLenisManager();
-const cardsAPI = initializeCardsReveal(lenisAPI);
-const scrollbarAPI = createCustomScrollbar(lenisAPI);
 
 // keep default right click menu
 canvas.addEventListener('contextmenu', (e) => {}, false);
@@ -42,7 +39,9 @@ rgbeLoader.load('/cnc-hdri.hdr', (texture) => {
 });
 
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+// Use local Draco decoder assets served from /public
+dracoLoader.setDecoderPath('/');
+dracoLoader.setDecoderConfig({ type: 'wasm' });
 
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
@@ -118,7 +117,5 @@ window.lenisManager = lenisAPI;
 
 window.addEventListener('beforeunload', () => {
 	lenisAPI.destroy();
-	cardsAPI.destroy();
-	scrollbarAPI.destroy();
 	dracoLoader.dispose();
 });

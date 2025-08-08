@@ -1,26 +1,106 @@
 ---
+import '@/styles/global.css';
 import '@/styles/fonts.css';
 export interface Props {
 	title?: string;
+	description?: string;
+	image?: string;
+	url?: string;
 }
 
-const { title = 'CNC' } = Astro.props;
+const {
+	title = 'CNC - Advanced Aerial Surveillance & Mission Solutions',
+	description = 'CNC provides defense-grade aerial surveillance solutions including CNC.LIVE portal, mission suite design, and comprehensive training for multi-agency operations.',
+	image = '/ogImage.jpg',
+	url = Astro.url,
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang='en'>
 	<head>
 		<meta charset='UTF-8' />
-		<meta name='viewport' content='width=device-width' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
 		<meta name='generator' content={Astro.generator} />
+
+		<!-- Primary Meta Tags -->
+		<title>{title}</title>
+		<meta name='title' content={title} />
+		<meta name='description' content={description} />
+		<meta
+			name='keywords'
+			content='CNC, aerial surveillance, mission suite, defense technology, UAV, helicopter, fixed wing, real-time footage, situational awareness, multi-agency operations'
+		/>
+		<meta name='author' content='CNC' />
+		<meta name='robots' content='index, follow' />
+		<link rel='canonical' href={url} />
+
+		<!-- Open Graph / Facebook -->
+		<meta property='og:type' content='website' />
+		<meta property='og:url' content={url} />
+		<meta property='og:title' content={title} />
+		<meta property='og:description' content={description} />
+		<meta property='og:image' content={image} />
+		<meta property='og:image:width' content='1200' />
+		<meta property='og:image:height' content='630' />
+		<meta property='og:site_name' content='CNC' />
+		<meta property='og:locale' content='en_US' />
+
+		<!-- Twitter -->
+		<meta property='twitter:card' content='summary_large_image' />
+		<meta property='twitter:url' content={url} />
+		<meta property='twitter:title' content={title} />
+		<meta property='twitter:description' content={description} />
+		<meta property='twitter:image' content={image} />
+
+		<!-- Additional Meta Tags -->
+		<meta name='theme-color' content='#9da4ac' />
+		<meta name='msapplication-TileColor' content='#9da4ac' />
+		<meta name='apple-mobile-web-app-capable' content='yes' />
+		<meta name='apple-mobile-web-app-status-bar-style' content='default' />
+		<meta name='apple-mobile-web-app-title' content='CNC' />
+
+		<!-- Structured Data -->
+		<script type='application/ld+json'>
+			{
+				"@context": "https://schema.org",
+				"@type": "Organization",
+				"name": "CNC",
+				"description": "Advanced aerial surveillance and mission solutions provider",
+				"url": "https://cnc.com",
+				"logo": "https://cnc.com/cncLogo.svg",
+				"sameAs": [],
+				"contactPoint": {
+					"@type": "ContactPoint",
+					"contactType": "customer service"
+				},
+				"serviceArea": {
+					"@type": "Country",
+					"name": "Worldwide"
+				}
+			}
+		</script>
+
+		<!-- scene assets warm-up -->
+		<link rel='preload' href='/cnc.glb' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/cnc-hdri.hdr' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/lottie/loader.json' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/lottie/bgMain.json' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/lottie/bgInnerCircle.json' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/lottie/bgOuterCircle.json' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/lottie/bgStaticCircle.json' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/lottie/bgCncLetters.json' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/draco_wasm_wrapper.js' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/draco_decoder.wasm' as='fetch' crossorigin='anonymous' />
+		<link rel='preload' href='/laptop_screen.webp' as='image' type='image/webp' crossorigin='anonymous' />
+		<link rel='preload' href='/laptop_keyboard.webp' as='image' type='image/webp' crossorigin='anonymous' />
+
+		<!-- fonts -->
 		<link rel='preload' href='/fonts/protomono-semibold.woff2' as='font' type='font/woff2' crossorigin='anonymous' />
-		<link rel='preload' href='/fonts/suisse-intl-regular.woff2' as='font' type='font/woff2' crossorigin='anonymous' />
+		<link rel='preload' href='/fonts/protomono-semibold.woff' as='font' type='font/woff2' crossorigin='anonymous' />
 		<link rel='preload' href='/fonts/suisse-intl-regular.woff2' as='font' type='font/woff2' crossorigin='anonymous' />
 		<link rel='preload' href='/fonts/suisse-intl-regular.woff' as='font' type='font/woff' crossorigin='anonymous' />
-		<title>
-			{title}
-		</title>
 	</head>
 	<body>
 		<slot />
