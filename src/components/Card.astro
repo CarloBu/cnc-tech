@@ -228,10 +228,23 @@ const { content, imagePosition = 'right', size = 'medium' } = Astro.props;
 		will-change: transform;
 	}
 
-	/* Animation classes */
 	.fade-text {
 		opacity: 0;
 	}
-</style>
 
-<!-- Card animations are now handled by gsapCardReveal.js -->
+	/* hide image card on small screens */
+	@media (max-width: 860px) {
+		.image-card {
+			display: none;
+		}
+
+		.card-container[data-image-position='right'] {
+			flex-direction: column;
+		}
+
+		.content-card {
+			width: 100%;
+			max-width: 21rem;
+		}
+	}
+</style>
