@@ -373,15 +373,13 @@ const cardAnimators = new Map();
 
 export function initializeCardAnimators() {
 	const allCardContainers = document.querySelectorAll('.card-container[data-card-id]');
-	console.log('Found card containers:', allCardContainers.length);
 
 	allCardContainers.forEach((cardElement) => {
 		const cardId = cardElement.dataset.cardId;
-		console.log('Initializing card:', cardId);
+
 		if (!cardAnimators.has(cardId)) {
 			const animator = new CardRevealAnimator(cardElement);
 			cardAnimators.set(cardId, animator);
-			console.log('Card animator created for:', cardId);
 		}
 	});
 }
