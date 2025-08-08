@@ -31,8 +31,8 @@ let baseRadius = 1;
 const desiredMouse = { x: 0, y: 0 };
 const smoothMouse = { x: 0, y: 0 };
 
-const maxAzimuthOffset = THREE.MathUtils.degToRad(3); // left-right
-const maxPolarOffset = THREE.MathUtils.degToRad(2); // up-down
+const maxAzimuthOffset = THREE.MathUtils.degToRad(2); // left-right
+const maxPolarOffset = THREE.MathUtils.degToRad(1); // up-down
 const sphericalEpsilon = 1e-3;
 
 const renderer = new THREE.WebGLRenderer({
