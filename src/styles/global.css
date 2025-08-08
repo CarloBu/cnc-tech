@@ -64,7 +64,6 @@ html::-webkit-scrollbar {
 	height: 100vh;
 	z-index: 5;
 	pointer-events: auto;
-	filter: saturate(0.1);
 }
 
 .scroll-section {
