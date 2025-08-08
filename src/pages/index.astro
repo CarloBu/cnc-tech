@@ -52,7 +52,7 @@ const liveCard = allCards.find((card) => card.id === 'live');
 
 	<div class='scroll-section'></div>
 	<canvas id='canvas'></canvas>
-	<canvas id='fluidCanvas' class='pointer-events-auto fixed inset-0 z-5 w-full h-full'></canvas>
+	<canvas id='fluidCanvas'></canvas>
 	<div class='bg-overlay-wrapper'>
 		<LottieLayer id='bg-main' src='/lottie/bgMain.json' segments={[120, 149]} fillScreen />
 		<LottieLayer id='bg-inner-circle' src='/lottie/bgInnerCircle.json' rotate='clockwise' rotationSpeed={60} />
@@ -78,13 +78,20 @@ const liveCard = allCards.find((card) => card.id === 'live');
 
 		window.lottie = lottie;
 
-		// Load fluid simulation with proper cleanup
+		// Check if device supports touch
+		const isTouchDevice = () => {
+			return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+		};
+
+		// Load fluid simulation only on non-touch devices
 		const loadFluidSimulation = async () => {
+			if (isTouchDevice()) {
+				return;
+			}
+
 			try {
 				await import('@/scripts/fluid.js');
-			} catch (error) {
-				console.error('Error loading fluid simulation:', error);
-			}
+			} catch (error) {}
 		};
 
 		// Prevent browser scroll restoration and reset scroll position immediately
