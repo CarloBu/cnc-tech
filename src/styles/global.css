@@ -52,20 +52,32 @@ html::-webkit-scrollbar {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: 2;
+	z-index: 6;
+	pointer-events: none;
+}
+
+#fluidCanvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 5;
+	pointer-events: auto;
+	filter: saturate(0.1);
 }
 
 .scroll-section {
 	height: 800vh;
 	position: relative;
-	z-index: 3;
+	z-index: 1;
 }
 
 .logo-container {
 	position: fixed;
 	top: 4vh;
 	left: 5vw;
-	z-index: 5;
+	z-index: 7;
 }
 
 .logo {
@@ -76,7 +88,7 @@ html::-webkit-scrollbar {
 
 .card-position {
 	position: fixed;
-	z-index: 4;
+	z-index: 8;
 }
 
 .card-position--left-middle {
