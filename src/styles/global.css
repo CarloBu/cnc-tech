@@ -14,8 +14,7 @@ body {
 
 body {
 	overflow-x: hidden;
-	background: linear-gradient(to bottom, #9da4ac 0%, #ced1d0 100%);
-	background-attachment: fixed;
+	background: transparent;
 }
 
 html {
@@ -27,13 +26,37 @@ html::-webkit-scrollbar {
 	display: none;
 }
 
+.page-root {
+	position: relative;
+	width: 100%;
+	min-height: 100%;
+}
+
+.stage-fixed {
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+}
+
+.gradient-bg {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	background: linear-gradient(to bottom, #9da4ac 0%, #ced1d0 100%);
+}
+
+.scroll-container {
+	position: relative;
+	z-index: 0;
+}
+
 .loader-wrapper {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: 110;
+	z-index: 910;
 	pointer-events: none;
 }
 
@@ -43,16 +66,17 @@ html::-webkit-scrollbar {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
+	z-index: 10;
 	pointer-events: none;
 }
 
-#canvas {
+#threejsCanvas {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: 6;
+	z-index: 30;
 	pointer-events: none;
 }
 
@@ -62,7 +86,7 @@ html::-webkit-scrollbar {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: 5;
+	z-index: 20;
 	pointer-events: auto;
 }
 
@@ -76,7 +100,7 @@ html::-webkit-scrollbar {
 	position: fixed;
 	top: 4vh;
 	left: 5vw;
-	z-index: 7;
+	z-index: 40;
 }
 
 .logo {
@@ -85,25 +109,35 @@ html::-webkit-scrollbar {
 	opacity: 1;
 }
 
-.card-position {
+.cards-inner {
 	position: fixed;
-	z-index: 8;
+	inset: 0;
+	pointer-events: none;
+	z-index: 50;
+	width: 100%;
+	max-width: 1920px;
+	height: 100%;
+	margin: 0 auto;
+}
+
+.card-position {
+	position: absolute;
 }
 
 .card-position--left-middle {
-	left: 10vw;
-	top: 50vh;
+	left: 10%;
+	top: 50%;
 	transform: translateY(-50%);
 }
 
 .card-position--right-bottom {
-	right: 15vw;
-	bottom: 15vh;
+	right: 15%;
+	bottom: 15%;
 }
 
 .card-position--right-middle {
-	right: 10vw;
-	top: 50vh;
+	right: 10%;
+	top: 50%;
 	transform: translateY(-50%);
 }
 
@@ -111,7 +145,7 @@ html::-webkit-scrollbar {
 	position: fixed;
 	inset: 0;
 	background: #000;
-	z-index: 100;
+	z-index: 900;
 	display: flex;
 	align-items: center;
 	justify-content: center;

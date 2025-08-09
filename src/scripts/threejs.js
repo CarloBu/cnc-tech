@@ -8,7 +8,7 @@ import { createLenisManager } from './lenis.js';
 
 import { applyMaterials, initializeUVAnimation, updateHeliOpacityUV } from './materials.js';
 
-const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('threejsCanvas');
 const scrollIndicator = document.getElementById('scroll-indicator');
 const scene = new THREE.Scene();
 
