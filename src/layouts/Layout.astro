@@ -20,7 +20,24 @@ const {
 <html lang='en'>
 	<head>
 		<script>
-			console.log('start');
+			declare global {
+				interface Window {
+					preloaderStarted?: boolean;
+				}
+			}
+			window.preloaderStarted = window.preloaderStarted || false;
+			(function () {
+				var id = setInterval(function () {
+					if (window.preloaderStarted) {
+						clearInterval(id);
+						return;
+					}
+					var el = document.getElementById('preloader-counter');
+					if (!el) return;
+					var n = parseInt(el.textContent || '0', 10) || 0;
+					if (n < 99) el.textContent = n + 1 + '%';
+				}, 100);
+			})();
 		</script>
 		<meta charset='UTF-8' />
 		<meta name='viewport' content='width=device-width, initial-scale=1.0' />

@@ -57,8 +57,17 @@ export function startPreloaderCounter() {
 		return;
 	}
 
+	try {
+		window.preloaderStarted = true;
+	} catch (_) {}
+
 	let animationFrameId = 0;
 	let animationStartTime = 0;
+	const startPercent = (() => {
+		const n = parseInt((preloaderCounter.textContent || '0').replace(/[^0-9]/g, ''), 10);
+		if (!Number.isFinite(n)) return 0;
+		return Math.max(0, Math.min(n, 99));
+	})();
 
 	const updateCounter = (timestamp) => {
 		if (!animationStartTime) {
@@ -67,7 +76,9 @@ export function startPreloaderCounter() {
 
 		const elapsedMs = timestamp - animationStartTime;
 		const progress = Math.min(1, elapsedMs / durationMs);
-		const percent = Math.floor(progress * 100);
+		const target = 100;
+		const delta = target - startPercent;
+		const percent = Math.min(target, startPercent + Math.floor(progress * delta));
 		preloaderCounter.textContent = `${percent}%`;
 
 		if (progress < 1) {
@@ -81,7 +92,7 @@ export function startPreloaderCounter() {
 		triggerPreloaderExit();
 	};
 
-	preloaderCounter.textContent = '0%';
+	preloaderCounter.textContent = `${startPercent}%`;
 	animationFrameId = requestAnimationFrame(updateCounter);
 
 	// Safety: if overlay disappears early, stop the animation
