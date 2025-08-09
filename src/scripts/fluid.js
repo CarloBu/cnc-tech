@@ -1160,9 +1160,9 @@ function initFluidSimulation() {
 
 	function generateColor() {
 		return {
-			r: Math.min((200 / 255) * 0.02),
-			g: Math.min((200 / 255) * 0.02),
-			b: Math.min((200 / 255) * 0.02),
+			r: Math.min((80 / 255) * 0.02),
+			g: Math.min((80 / 255) * 0.02),
+			b: Math.min((80 / 255) * 0.02),
 		};
 	}
 
