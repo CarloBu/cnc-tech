@@ -9,6 +9,7 @@ export interface Props {
 	rotationSpeed?: number;
 	fillScreen?: boolean;
 	removeAfterPlay?: boolean;
+	trigger?: string;
 }
 
 const {
@@ -21,104 +22,148 @@ const {
 	rotationSpeed = 60,
 	fillScreen = false,
 	removeAfterPlay = false,
+	trigger,
 } = Astro.props;
 ---
 
 <div id={id} class={`lottie-layer ${className}`}></div>
 
-<script define:vars={{ id, src, loop, segments, rotate, rotationSpeed, fillScreen, removeAfterPlay }}>
-	document.addEventListener('DOMContentLoaded', () => {
-		const initLottie = () => {
-			if (!window.lottie) {
-				setTimeout(initLottie, 50);
-				return;
+<script define:vars={{ id, src, loop, segments, rotate, rotationSpeed, fillScreen, removeAfterPlay, trigger }}>
+	const initLottie = () => {
+		if (!window.lottie) {
+			setTimeout(initLottie, 50);
+			return;
+		}
+
+		const container = document.getElementById(id);
+		if (!container) {
+			console.error(`Lottie container with ID "${id}" not found`);
+			return;
+		}
+
+		const animation = window.lottie.loadAnimation({
+			container: container,
+			renderer: 'svg',
+			loop: loop || false,
+			autoplay: !trigger,
+			path: src,
+			rendererSettings: {
+				preserveAspectRatio: fillScreen ? 'none' : 'xMidYMid meet',
+				progressiveLoad: false,
+			},
+		});
+
+		// Extra safety: ensure stopped in trigger mode regardless of any library quirks
+		if (trigger) {
+			try {
+				animation.stop();
+			} catch (_) {}
+		}
+
+		animation.addEventListener('DOMLoaded', () => {
+			const svg = container.querySelector('svg');
+			if (svg) {
+				if (fillScreen) {
+					// Scale to fill screen
+					svg.style.width = '100%';
+					svg.style.height = '100%';
+					svg.style.position = 'absolute';
+					svg.style.top = '0';
+					svg.style.left = '0';
+					container.style.opacity = '1';
+				} else {
+					// Scale only height, keep aspect ratio
+					svg.style.width = 'auto';
+					svg.style.height = '100%';
+					svg.style.minWidth = '100%';
+					svg.style.position = 'absolute';
+					svg.style.left = '50%';
+					svg.style.transform = 'translateX(-50%)';
+					container.style.opacity = '1';
+				}
 			}
 
-			const container = document.getElementById(id);
-			if (!container) {
-				console.error(`Lottie container with ID "${id}" not found`);
-				return;
+			// Hard-stop on first frame when trigger mode is used, to avoid any accidental autoplay
+			if (trigger) {
+				try {
+					animation.goToAndStop(0, true);
+				} catch (_) {}
+
+				// Sticky trigger: if the event already fired before listener attachment, play now
+				const fired = Boolean(window.__lottieTriggersFired && window.__lottieTriggersFired[trigger]);
+				if (fired) {
+					try {
+						animation.goToAndStop(0, true);
+					} catch (_) {}
+					animation.play();
+				}
 			}
+		});
 
-			const animation = window.lottie.loadAnimation({
-				container: container,
-				renderer: 'svg',
-				loop: loop || false,
-				autoplay: true,
-				path: src,
-				rendererSettings: {
-					preserveAspectRatio: fillScreen ? 'none' : 'xMidYMid meet',
-					progressiveLoad: false,
-				},
-			});
+		window.lottie.setQuality('high');
 
-			animation.addEventListener('DOMLoaded', () => {
-				const svg = container.querySelector('svg');
-				if (svg) {
-					if (fillScreen) {
-						// Scale to fill screen
-						svg.style.width = '100%';
-						svg.style.height = '100%';
-						svg.style.position = 'absolute';
-						svg.style.top = '0';
-						svg.style.left = '0';
-					} else {
-						// Scale only height, keep aspect ratio
-						svg.style.width = 'auto';
-						svg.style.height = '100%';
-						svg.style.minWidth = '100%';
-						svg.style.position = 'absolute';
-						svg.style.left = '50%';
-						svg.style.transform = 'translateX(-50%)';
+		// Handle removeAfterPlay functionality
+		if (removeAfterPlay && !loop) {
+			animation.addEventListener('complete', () => {
+				try {
+					if (typeof animation.destroy === 'function') {
+						animation.destroy();
 					}
+				} catch (_) {}
+				if (container && container.parentNode) {
+					container.parentNode.removeChild(container);
 				}
 			});
+		}
 
-			window.lottie.setQuality('high');
+		if (segments && !loop) {
+			animation.addEventListener('complete', () => {
+				animation.playSegments(segments, true);
+				animation.loop = true;
+			});
+		}
 
-			// Handle removeAfterPlay functionality
-			if (removeAfterPlay && !loop) {
-				animation.addEventListener('complete', () => {
-					// Remove the container from DOM
-					if (container && container.parentNode) {
-						container.parentNode.removeChild(container);
-					}
-				});
-			}
+		// If a trigger is provided, start playing when the event fires
+		if (trigger) {
+			const onTrigger = () => {
+				// Ensure we always start from the beginning on trigger
+				try {
+					animation.goToAndStop(0, true);
+				} catch (_) {}
+				animation.play();
+			};
+			window.addEventListener(trigger, onTrigger, { once: true });
+		}
 
-			if (segments && !loop) {
-				animation.addEventListener('complete', () => {
-					animation.playSegments(segments, true);
-					animation.loop = true;
-				});
-			}
+		// Handle rotation
+		if (rotate && rotate !== 'none') {
+			const direction = rotate === 'clockwise' ? 1 : -1;
+			const duration = rotationSpeed * 3600;
+			let startTime = null;
+			let currentRotation = 0;
 
-			// Handle rotation
-			if (rotate && rotate !== 'none') {
-				const direction = rotate === 'clockwise' ? 1 : -1;
-				const duration = rotationSpeed * 3600;
-				let startTime = null;
-				let currentRotation = 0;
+			const animateRotation = (timestamp) => {
+				if (!startTime) startTime = timestamp;
+				const elapsed = timestamp - startTime;
 
-				const animateRotation = (timestamp) => {
-					if (!startTime) startTime = timestamp;
-					const elapsed = timestamp - startTime;
+				const progress = (elapsed % duration) / duration;
+				currentRotation = progress * 360 * direction;
 
-					const progress = (elapsed % duration) / duration;
-					currentRotation = progress * 360 * direction;
-
-					container.style.transformOrigin = '50% 53.24%';
-					container.style.transform = `rotate(${currentRotation}deg)`;
-
-					requestAnimationFrame(animateRotation);
-				};
+				container.style.transformOrigin = '50% 53.24%';
+				container.style.transform = `rotate(${currentRotation}deg)`;
 
 				requestAnimationFrame(animateRotation);
-			}
-		};
+			};
 
+			requestAnimationFrame(animateRotation);
+		}
+	};
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initLottie);
+	} else {
 		initLottie();
-	});
+	}
 </script>
 
 <style>
@@ -131,5 +176,6 @@ const {
 		pointer-events: none;
 		z-index: inherit;
 		overflow: hidden;
+		opacity: 0;
 	}
 </style>

@@ -14,10 +14,25 @@ const liveCard = allCards.find((card) => card.id === 'live');
 
 <Layout title='CNC'>
 	<div id='preloader-overlay' class='preloader-overlay' aria-hidden='true'>
+		<div id='inline-loader-placeholder' style='position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;opacity:1;'>
+			<svg
+				viewBox='0 0 1920 1080'
+				fill='none'
+				xmlns='http://www.w3.org/2000/svg'
+				style='width:auto;height:100%;min-width:100%;position:absolute;left:50%;transform:translateX(-50%);'>
+				<path d='M553.672 575.042L553.379 568.291L683.413 568.006L683.711 574.757L553.672 575.042Z' fill='white'></path>
+				<path d='M1366.33 575.042L1366.62 568.291L1236.59 568.006L1236.29 574.757L1366.33 575.042Z' fill='white'></path>
+				<path d='M961.069 660.263L958.847 660.23V662.627L961.069 662.66V660.263Z' fill='white'></path>
+				<path d='M958.931 509.238L961.153 509.271V506.874L958.931 506.841V509.238Z' fill='white'></path>
+				<path
+					d='M949.28 829.641H952.05V836.621H950.38V831.141H949.87L948.01 832.601L947.12 831.321L949.28 829.641ZM957.26 835.301H963.12V836.621H955.53V835.011C955.53 834.701 955.56 834.431 955.62 834.211C955.68 833.981 955.8 833.781 955.98 833.601C956.16 833.411 956.42 833.261 956.77 833.141C957.12 833.021 957.56 832.931 958.12 832.881L960.33 832.761C960.77 832.731 961.07 832.651 961.22 832.521C961.38 832.381 961.46 832.141 961.46 831.811C961.46 831.591 961.42 831.421 961.34 831.301C961.27 831.181 961.13 831.101 960.94 831.041C960.74 830.991 960.46 830.971 960.09 830.971H958.93C958.4 830.971 958.02 831.001 957.79 831.071C957.56 831.141 957.42 831.251 957.36 831.411C957.3 831.571 957.26 831.841 957.26 832.221H955.58C955.58 831.651 955.63 831.191 955.75 830.831C955.87 830.471 956.11 830.181 956.48 829.971C956.84 829.761 957.38 829.651 958.09 829.651H960.6C961.11 829.651 961.53 829.691 961.85 829.761C962.17 829.841 962.42 829.961 962.61 830.131C962.8 830.311 962.93 830.541 963.01 830.831C963.09 831.121 963.13 831.491 963.13 831.951C963.13 832.421 963.03 832.821 962.83 833.131C962.62 833.451 962.33 833.691 961.96 833.851C961.58 834.011 961.14 834.111 960.63 834.141L958.46 834.271C958.13 834.291 957.88 834.321 957.71 834.371C957.54 834.411 957.42 834.481 957.35 834.571C957.285 834.679 957.253 834.804 957.26 834.931V835.301Z'
+					fill='white'></path>
+			</svg>
+		</div>
 		<div id='preloader-counter' class='preloader-counter'>0%</div>
 	</div>
 	<div class='loader-wrapper'>
-		<LottieLayer id='loader-layer' src='/lottie/loader.json' removeAfterPlay />
+		<LottieLayer id='loader-layer' src='/lottie/loader.json' removeAfterPlay trigger='preloader:reveal' />
 	</div>
 	<ScrollIndicator />
 
@@ -54,11 +69,11 @@ const liveCard = allCards.find((card) => card.id === 'live');
 	<canvas id='canvas'></canvas>
 	<canvas id='fluidCanvas'></canvas>
 	<div class='bg-overlay-wrapper'>
-		<LottieLayer id='bg-main' src='/lottie/bgMain.json' segments={[120, 149]} fillScreen />
-		<LottieLayer id='bg-inner-circle' src='/lottie/bgInnerCircle.json' rotate='clockwise' rotationSpeed={60} />
-		<LottieLayer id='bg-outer-circle' src='/lottie/bgOuterCircle.json' rotate='counter-clockwise' rotationSpeed={60} />
-		<LottieLayer id='bg-static-circle' src='/lottie/bgStaticCircle.json' />
-		<LottieLayer id='bg-cnc-letters' src='/lottie/bgCncLetters.json' />
+		<LottieLayer id='bg-main' src='/lottie/bgMain.json' segments={[120, 149]} fillScreen trigger='preloader:reveal' />
+		<LottieLayer id='bg-inner-circle' src='/lottie/bgInnerCircle.json' rotate='clockwise' rotationSpeed={60} trigger='preloader:reveal' />
+		<LottieLayer id='bg-outer-circle' src='/lottie/bgOuterCircle.json' rotate='counter-clockwise' rotationSpeed={60} trigger='preloader:reveal' />
+		<LottieLayer id='bg-static-circle' src='/lottie/bgStaticCircle.json' trigger='preloader:reveal' />
+		<LottieLayer id='bg-cnc-letters' src='/lottie/bgCncLetters.json' trigger='preloader:reveal' />
 	</div>
 
 	<script src='@/scripts/threejs.js'></script>
@@ -68,7 +83,8 @@ const liveCard = allCards.find((card) => card.id === 'live');
 		import { initGlobalGsapAnimations } from '@/scripts/globalGsapAnimations.js';
 		import { initializeCardAnimators } from '@/scripts/gsapCardReveal.js';
 		import { createCustomScrollbar } from '@/scripts/customScrollbar.js';
-		import { triggerPreloaderExit } from '@/scripts/preloader.js';
+		import { startPreloaderCounter } from '@/scripts/preloader.js';
+
 		declare global {
 			interface Window {
 				lenisManager: any;
@@ -106,8 +122,8 @@ const liveCard = allCards.find((card) => card.id === 'live');
 			// Ensure fluid simulation is loaded on initial view
 			loadFluidSimulation();
 
-			// Trigger preloader exit animation
-			triggerPreloaderExit();
+			// Start  preloader counter
+			startPreloaderCounter();
 
 			setTimeout(() => {
 				if (window.lenisManager) {

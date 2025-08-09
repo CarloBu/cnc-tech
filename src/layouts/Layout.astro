@@ -19,6 +19,9 @@ const {
 <!doctype html>
 <html lang='en'>
 	<head>
+		<script>
+			console.log('start');
+		</script>
 		<meta charset='UTF-8' />
 		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
@@ -83,9 +86,9 @@ const {
 		</script>
 
 		<!-- scene assets warm-up -->
+		<link rel='preload' href='/lottie/loader.json' as='fetch' crossorigin='anonymous' />
 		<link rel='preload' href='/cnc.glb' as='fetch' crossorigin='anonymous' />
 		<link rel='preload' href='/cnc-hdri.hdr' as='fetch' crossorigin='anonymous' />
-		<link rel='preload' href='/lottie/loader.json' as='fetch' crossorigin='anonymous' />
 		<link rel='preload' href='/lottie/bgMain.json' as='fetch' crossorigin='anonymous' />
 		<link rel='preload' href='/lottie/bgInnerCircle.json' as='fetch' crossorigin='anonymous' />
 		<link rel='preload' href='/lottie/bgOuterCircle.json' as='fetch' crossorigin='anonymous' />
